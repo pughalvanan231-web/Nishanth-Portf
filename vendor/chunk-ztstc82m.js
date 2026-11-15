@@ -4467,7 +4467,7 @@ void main() {
               Final
             */
             vec4 final = textureDiffuse;
-            final = texturePixelatedTransition + final * (1.0 - texturePixelatedTransition.a); // Add transition scroll effect
+            // final = texturePixelatedTransition + final * (1.0 - texturePixelatedTransition.a); // Add transition scroll effect
             // final = vec4(COLOR_HIGHLIGHT * light, light) + final * (1.0 - light);
             final += vec4(COLOR_HIGHLIGHT * light, light);
             // final = vec4(vec3(light), 1.0);
@@ -4798,13 +4798,9 @@ void main() {
             vec4 texturePixelatedTransition = pixelPass(tTransitionColor, tNoise, uvVideo, vec2(1.0, 1.0), 50.0, 1.5, vec2(1.5 - transitionEffectVideo * 1.5, 2.5 - transitionEffectVideo * 2.5), vec2(0.0, 0.005), vec3(0.0, 1.0, 2.0));
 
             /* 
-              Mixed
+              Mixed (Pixel cursor blur effect removed)
             */
-            vec4 mixed = mix(
-              textureDiffuse, 
-              texturePixelated, 
-              noiseMask * pixelMaskForFace
-            );
+            vec4 mixed = textureDiffuse;
 
             /* 
               Final
