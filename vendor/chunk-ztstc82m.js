@@ -4460,13 +4460,19 @@ void main() {
             vec4 texturePixelatedTransition = pixelPass(tTransitionColor, tNoise, uvDepthMovement, vec2(1.0, 1.0), 50.0, 1.5, vec2(1.5 - transitionEffect * 1.5, 2.5 - transitionEffect * 2.5), vec2(0.0, 0.005), vec3(0.0, 1.0, 2.0));
 
             // Set Alpha
-            textureDiffuse.a *= min(transitionAlphaScrollMask, transitionAlphaPreloaderMask);
-            light *= min(transitionAlphaScrollMask, transitionAlphaPreloaderMask);
+            // Pure smooth fade in and out without pixel stair-step / dither cutouts
+            float charFadeIn = smoothstep(0.0, 1.0, uTransitionPreloader);
+            float charFadeOut = 1.0 - smoothstep(0.0, 1.0, uTransition1);
+            float charFade = charFadeIn * charFadeOut;
+            textureDiffuse.a *= charFade;
+            light *= charFade;
+            
 
             /* 
               Final
             */
             vec4 final = textureDiffuse;
+            // // Disabled pixelated transition: pure clean fade
             // final = texturePixelatedTransition + final * (1.0 - texturePixelatedTransition.a); // Add transition scroll effect
             // final = vec4(COLOR_HIGHLIGHT * light, light) + final * (1.0 - light);
             final += vec4(COLOR_HIGHLIGHT * light, light);
@@ -4807,7 +4813,8 @@ void main() {
             */
             vec4 final = mixed;
             final = final + textureVideoHero * uTransition2 * max(1.0 - uTransition5, uTransition6) * (1.0 - final.a);
-            final = vec4(dots) + final * (1.0 - dots);
+            // Disabled dot pass dither: pure clean fade
+            // final = vec4(dots) + final * (1.0 - dots);
             // final = mobileTransitionDots + final * (1.0 - mobileTransitionDots.a);
             // final = carTransitionDots + final * (1.0 - carTransitionDots.a);
             // final = vec4(COLOR_HIGHLIGHT_MOBILE * lightMobile, lightMobile) + final * (1.0 - lightMobile);
@@ -5100,7 +5107,7 @@ void main() {
             Textures
           */
           vec4 textureBackground = texture2D(tBackground, uv);
-          vec4 textureWheel = pixelMultiPass(tWheel, tNoise, uv, vec2(0.0, 1.0), 150.0, 1.0, vec2(0.1, 0.15), vec2(0.0005, 0.0), vec3(0.0, 1.0, 2.0), 16);
+          vec4 textureWheel = texture2D(tWheel, uv);
           // textureWheel.rgb *= textureWheel.a;
           // vec4 textureWheel = texture2D(tWheel, uv);  
           // textureWheel.rgb *= textureWheel.a;
