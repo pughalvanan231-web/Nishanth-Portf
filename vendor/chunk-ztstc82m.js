@@ -4774,7 +4774,7 @@ void main() {
             // Both ride the same fade, and together they are by far the heaviest thing in the shader
             // (12 pixelPass samples at 5 taps each, plus GOD_RAY_MAX_SAMPLES taps). One uniform branch
             // around the pair skips all of it while the fade holds the result at zero anyway.
-            float carFxAmount = uTransition7 * smoothstep(0.25, 0.0, uCarExitFade);
+            float carFxAmount = 0.0; // uTransition7 * smoothstep(0.25, 0.0, uCarExitFade);
 
             vec4 texturePixelatedWheel = vec4(0.0);
             float rays = 0.0;
@@ -4815,8 +4815,9 @@ void main() {
             final = texturePixelatedTransition + final * (1.0 - texturePixelatedTransition.a);
             final += vec4(COLOR_HIGHLIGHT_MOBILE * lightMobile, lightMobile);
             final += vec4(COLOR_HIGHLIGHT_CAR * lightCar, lightCar);
-            final = texturePixelatedWheel + final * (1.0 - texturePixelatedWheel.a);
-            final = vec4(rays) + final * (1.0 - rays);
+            // Disabled steering wheel pixel glow and god rays
+            // final = texturePixelatedWheel + final * (1.0 - texturePixelatedWheel.a);
+            // final = vec4(rays) + final * (1.0 - rays);
             final = textureStars + final * (1.0 - textureStars);
             // final = videoPixelated;
 
