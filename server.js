@@ -44,28 +44,6 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = url.pathname;
 
-  // Endpoint to save generated composite canvas images
-  if (pathname === '/save-composite' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      try {
-        const { name, dataUrl } = JSON.parse(body);
-        const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
-        const filePath = path.join(__dirname, name);
-        fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
-        console.log(`Saved composite image: ${filePath} (${Math.round(base64Data.length/1024)} KB)`);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ ok: true, file: name }));
-      } catch (e) {
-        console.error('Error saving composite:', e);
-        res.writeHead(500);
-        res.end(e.message);
-      }
-    });
-    return;
-  }
-
   // 1. Proxy /v5/ WebGL & 3D Assets directly to itsoffbrand CDN with streaming
   if (pathname.startsWith('/v5/')) {
     const targetUrl = `https://autopilot.itsoffbrand.io${pathname}`;
